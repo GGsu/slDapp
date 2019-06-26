@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="utf-8">
+	<title>DappDemo</title>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+	<script type="text/javascript" src="jquery.min.js"></script>
+</head>
+<body>
+<h1>Dapp Demo</h1>
+
+<h2 id="info"> </h2>
+<label>姓名：</label>
+<input id="name" name="text">
+<label>年龄：</label>
+<input id="age" name="text">
+<button id="button">更新</button>
+<!--启用web3-->
+<script type="text/javascript">
+	//调用web3
+	  if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // 连接端口如果不一样请自行更改
+            web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+        }
+    web3.eth.defaultAccount = web3.eth.accounts[0];//很重要，定义默认账户
+	var infoContract = web3.eth.contract([
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"name": "_age",
+				"type": "uint256"
+			}
+		],
+		"name": "setInfo",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getInfo",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]);
+
+//var info = infoContracts.at('0x5f3a4c45bf7c1afadeebed406e246e8b940dd6c8');
+var info = infoContract.at('0x5f3a4c45bf7c1afadeebed406e246e8b940dd6c8');
+
+info.getInfo(function(error,result){
+	if(!error){
+		$("#info").html(result[0] + '(' + result[1] + 'years old)');
+
+	}
+}); 
+
+$("#button").click(function(){
+var name = $("#name").val();
+var age = $("#age").val();
+alert(age);
+info.setInfo(name,age,function(error,result)
+{
+	if(!error){
+		console.log("set ok");
+	}
+})
+});
+
+console.log("web3"+ web3);
+</script>
+</body>
+</html>
